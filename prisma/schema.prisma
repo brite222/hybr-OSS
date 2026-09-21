@@ -1,0 +1,390 @@
+// HYBR OS data model — mirrors src/lib/types.ts, backed by Postgres.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Auth / roles ---
+
+enum AppRole {
+  CEO
+  DEPARTMENT_LEAD
+  PROJECT_MANAGER
+  TEAM_MEMBER
+  FINANCE_ADMIN
+  SYSTEM_ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         AppRole  @default(TEAM_MEMBER)
+  department   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// --- Shared enums ---
+
+enum AlertLevel {
+  red
+  amber
+  green
+  info
+}
+
+// --- Generic dashboard content (shared shape across every page's stat tiles) ---
+
+model DashboardStat {
+  id       String      @id @default(cuid())
+  page     String
+  key      String
+  label    String
+  value    String
+  sublabel String?
+  level    AlertLevel?
+  trend    String?
+  order    Int         @default(0)
+
+  @@unique([page, key])
+}
+
+model AiBrief {
+  id      String @id @default(cuid())
+  scope   String @unique
+  content String
+}
+
+model RevenueGoal {
+  id           String @id @default(cuid())
+  scope        String @unique @default("default")
+  goal         Int
+  booked       Int
+  openPipeline Int
+  weighted     Int
+  gap          Int
+  monthsLeft   Int
+  runRate      Int
+}
+
+model RoleAccess {
+  id          String @id @default(cuid())
+  role        String @unique
+  performance String
+  finance     String
+  people      String
+  admin       String
+  defaultView String
+}
+
+// --- Home / general actions ---
+
+enum ActionPriority {
+  High
+  Medium
+  Low
+}
+
+enum ActionStatus {
+  Today
+  ThisWeek
+  Overdue
+  Upcoming
+  Completed
+}
+
+model Action {
+  id                 String         @id @default(cuid())
+  title              String
+  owner              String
+  dueLabel           String
+  priority           ActionPriority
+  status             ActionStatus
+  source             String
+  expectedOutcome    String
+  linkedKpi          String?
+  blocked            Boolean        @default(false)
+  blockedReason      String?
+  completionEvidence String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model WeeklyPriority {
+  id               String @id @default(cuid())
+  title            String
+  description      String
+  connectedActions Int    @default(0)
+}
+
+model AlertItem {
+  id     String     @id @default(cuid())
+  level  AlertLevel
+  title  String
+  detail String
+  owner  String
+  action String
+}
+
+// --- Growth: Marketing + Sales ---
+
+enum PipelineStage {
+  Identified
+  Engaged
+  Qualified
+  SolutionFit
+  Proposal
+  CommercialAlignment
+}
+
+model Opportunity {
+  id           String        @id @default(cuid())
+  name         String
+  account      String
+  value        Int
+  stage        PipelineStage
+  owner        String
+  closeDate    String
+  probability  Int
+  buyingGroup  Json
+  activity     Json
+  aiInsight    String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ContentItem {
+  id       String @id @default(cuid())
+  title    String
+  theme    String
+  icpReach Int
+  engaged  Int
+  intent   Int
+  meetings Int
+  pipeline Int
+}
+
+model IntentAccount {
+  id     String @id @default(cuid())
+  name   String
+  score  Int
+  signal String
+}
+
+// --- Finance ---
+
+enum InvoiceStatus {
+  Due
+  Overdue
+  Paid
+}
+
+model Invoice {
+  id                 String        @id @default(cuid())
+  number             String
+  client             String
+  value              Int
+  issued             String
+  due                String
+  overdueDays        Int           @default(0)
+  status             InvoiceStatus
+  owner              String
+  collectionActions  Json
+  source             Json
+  aiNote             String
+}
+
+model CashWeek {
+  id      String     @id @default(cuid())
+  week    Int
+  balance Int
+  level   AlertLevel
+}
+
+// --- Delivery ---
+
+enum ProjectStatus {
+  Healthy
+  Watch
+  AtRisk
+}
+
+model Project {
+  id               String        @id @default(cuid())
+  name             String
+  client           String
+  status           ProjectStatus
+  pm               String
+  progress         Int
+  margin           Int?
+  nextMilestone    String
+  currentStepIndex Int
+  health           Json
+  aiRiskNote       String
+  risks            Json
+  outcome          Json?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+// --- Operations ---
+
+model DepartmentExecution {
+  id       String @id @default(cuid())
+  owner    String
+  assigned Int
+  done     Int
+  late     Int
+  score    Int
+}
+
+enum MeetingStatus {
+  Ready
+  Draft
+  Published
+  Upcoming
+}
+
+model Meeting {
+  id           String        @id @default(cuid())
+  title        String
+  when         String
+  owner        String
+  actionsCount Int
+  status       MeetingStatus
+  agenda       Json
+  decisions    Json
+  aiDetected   Json
+}
+
+model StrategicPriority {
+  id       String @id @default(cuid())
+  title    String
+  owner    String
+  progress Int
+  note     String
+}
+
+// --- Admin ---
+
+enum KpiPriority {
+  P1
+  P2
+  P3
+}
+
+enum KpiStatus {
+  Active
+  Draft
+  Deprecated
+}
+
+model KpiDefinition {
+  id            String      @id @default(cuid())
+  name          String
+  formula       String
+  owner         String
+  source        String
+  cadence       String
+  target        String
+  threshold     String
+  priority      KpiPriority
+  status        KpiStatus
+  effectiveDate String
+}
+
+enum IntegrationMethod {
+  API
+  Webhooks
+  Manual
+  Scheduled
+}
+
+model IntegrationSource {
+  id       String            @id @default(cuid())
+  name     String
+  method   IntegrationMethod
+  status   AlertLevel
+  lastSync String
+}
+
+model AuditLogEntry {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+  user      String
+  object    String
+  original  String
+  updated   String
+  reason    String
+}
+
+// --- Product ---
+
+enum ExperimentStatus {
+  Validated
+  Testing
+  Stalled
+}
+
+enum ExperimentDecision {
+  Continue
+  Iterate
+  Stop
+  Scale
+  Pending
+}
+
+model Experiment {
+  id              String             @id @default(cuid())
+  title           String
+  hypothesis      String
+  status          ExperimentStatus
+  decision        ExperimentDecision
+  evidence        String
+  successCriteria String
+}
+
+// --- People ---
+
+enum TeamRisk {
+  Optimal
+  Utilization
+  Healthy
+  Watch
+}
+
+model TeamCapacity {
+  id        String   @id @default(cuid())
+  team      String
+  capacity  Int
+  execution Int
+  risk      TeamRisk
+  action    String
+}
+
+enum PersonStatus {
+  Good
+  Overloaded
+  Available
+  Watch
+}
+
+model PersonCapacity {
+  id               String       @id @default(cuid())
+  name             String
+  role             String
+  capacity         Int
+  currentLoad      Int
+  status           PersonStatus
+  execution        Int
+  developmentGoals Int
+  priorities       Json
+  managerNote      String
+}
