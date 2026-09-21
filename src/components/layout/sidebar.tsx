@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS } from "@/lib/nav";
+import { getNavItemsForRole } from "@/lib/nav";
 import { HybrLogo } from "@/components/layout/hybr-logo";
 import { cn } from "@/lib/utils";
+import type { AppRole } from "@/generated/prisma/enums";
 
-export function Sidebar() {
+export function Sidebar({ role }: { role: AppRole }) {
   const pathname = usePathname();
+  const items = getNavItemsForRole(role);
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
@@ -15,7 +17,7 @@ export function Sidebar() {
         <HybrLogo />
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
-        {NAV_ITEMS.map((item) => {
+        {items.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;
           return (

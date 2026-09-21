@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { AiInsightCard } from "@/components/dashboard/ai-insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
@@ -10,16 +12,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { homeStats, myPriorities, aiBrief, myActions } from "@/lib/mock-data";
+import type { Kpi } from "@/lib/types";
 
-const urgentActions = myActions.filter((a) => a.status === "Today" || a.status === "Overdue");
+export default async function HomePage() {
+  const session = await auth();
+  const firstName = session!.user.name?.split(" ")[0] ?? "there";
 
-export default function HomePage() {
+  const [stats, brief, weeklyPriorities, urgentActions] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "home" }, orderBy: { order: "asc" } }),
+    prisma.aiBrief.findUnique({ where: { scope: "home" } }),
+    prisma.weeklyPriority.findMany({ take: 3 }),
+    prisma.action.findMany({
+      where: { status: { in: ["Today", "Overdue"] } },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+
+  const homeStats: Kpi[] = stats.map((s) => ({
+    id: s.key,
+    label: s.label,
+    value: s.value,
+    sublabel: s.sublabel ?? undefined,
+    level: s.level ?? undefined,
+    trend: (s.trend as Kpi["trend"]) ?? undefined,
+  }));
+
   return (
     <div className="space-y-6">
       <SectionHeader
         eyebrow="Personal home"
-        title="Good afternoon, Charles"
+        title={`Good to see you, ${firstName}`}
         description="Here's what needs your attention today."
       />
 
@@ -33,16 +55,16 @@ export default function HomePage() {
         <div className="rounded-lg border bg-card p-4 lg:col-span-1">
           <h2 className="text-sm font-semibold">My priorities</h2>
           <ul className="mt-3 space-y-2">
-            {myPriorities.map((p) => (
-              <li key={p} className="flex items-center gap-2 text-sm">
+            {weeklyPriorities.map((p) => (
+              <li key={p.id} className="flex items-center gap-2 text-sm">
                 <span className="size-1.5 shrink-0 rounded-full bg-brand-blue" />
-                {p}
+                {p.title}
               </li>
             ))}
           </ul>
         </div>
 
-        <AiInsightCard className="lg:col-span-1">{aiBrief}</AiInsightCard>
+        {brief && <AiInsightCard className="lg:col-span-1">{brief.content}</AiInsightCard>}
 
         <div className="overflow-hidden rounded-lg border bg-card lg:col-span-1">
           <Table>

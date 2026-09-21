@@ -11,14 +11,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { NAV_ITEMS } from "@/lib/nav";
+import { getNavItemsForRole } from "@/lib/nav";
 import { HybrLogo } from "@/components/layout/hybr-logo";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import type { AppRole } from "@/generated/prisma/enums";
 
-export function MobileNav() {
+export function MobileNav({ role }: { role: AppRole }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const items = getNavItemsForRole(role);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -31,7 +33,7 @@ export function MobileNav() {
           <HybrLogo />
         </SheetHeader>
         <nav className="space-y-0.5 p-3">
-          {NAV_ITEMS.map((item) => {
+          {items.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (

@@ -1,15 +1,22 @@
 import { Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { UserMenu } from "@/components/layout/user-menu";
+import type { AppRole } from "@/generated/prisma/enums";
 
-export function Topbar() {
+export function Topbar({
+  role,
+  user,
+}: {
+  role: AppRole;
+  user: { name: string; email: string };
+}) {
   const today = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-3 border-b bg-background px-4 md:px-6">
-      <MobileNav />
+      <MobileNav role={role} />
       <div className="relative w-full max-w-sm">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input placeholder="Search HYBR OS" className="pl-8" />
@@ -22,9 +29,7 @@ export function Topbar() {
           <Sparkles className="size-3.5" />
           AI Brief
         </Button>
-        <Avatar className="size-8">
-          <AvatarFallback className="bg-brand-blue-dark text-xs text-white">CQ</AvatarFallback>
-        </Avatar>
+        <UserMenu name={user.name} email={user.email} />
       </div>
     </header>
   );

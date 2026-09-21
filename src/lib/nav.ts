@@ -12,6 +12,8 @@ import {
   Sparkles,
   Settings,
 } from "lucide-react";
+import type { AppRole } from "@/generated/prisma/enums";
+import { ROLE_ALLOWED_PATHS } from "@/lib/permissions";
 
 export type NavItem = {
   label: string;
@@ -33,3 +35,8 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Intelligence", href: "/intelligence", icon: Sparkles, description: "AI, alerts, reports" },
   { label: "Admin", href: "/admin", icon: Settings, description: "KPIs, users, integrations" },
 ];
+
+export function getNavItemsForRole(role: AppRole): NavItem[] {
+  const allowed = new Set(ROLE_ALLOWED_PATHS[role]);
+  return NAV_ITEMS.filter((item) => allowed.has(item.href));
+}
