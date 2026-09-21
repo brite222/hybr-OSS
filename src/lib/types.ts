@@ -200,3 +200,45 @@ export type StrategicPriority = {
   progress: number;
   note: string;
 };
+
+export type KpiDefinition = {
+  id: string;
+  name: string;
+  formula: string;
+  owner: string;
+  source: string;
+  cadence: string;
+  target: string;
+  threshold: string;
+  priority: "P1" | "P2" | "P3";
+  status: "Active" | "Draft" | "Deprecated";
+  effectiveDate: string;
+};
+
+export type RoleAccessLevel = "All" | "Dept" | "Project only" | "Own" | "Finance" | "Limited" | "No";
+
+export type RoleAccess = {
+  role: string;
+  performance: RoleAccessLevel;
+  finance: RoleAccessLevel;
+  people: RoleAccessLevel;
+  admin: RoleAccessLevel;
+  defaultView: string;
+};
+
+export type IntegrationSource = {
+  name: string;
+  method: "API" | "Webhooks" | "Manual" | "Scheduled";
+  status: AlertLevel;
+  lastSync: string;
+};
+
+export type AuditLogEntry = {
+  id: string;
+  timestamp: string;
+  user: string;
+  object: string;
+  original: string;
+  updated: string;
+  reason: string;
+};
