@@ -199,6 +199,7 @@ export function mapStrategicPriority(s: DbStrategicPriority): StrategicPriority 
 export function mapKpiDefinition(k: DbKpiDefinition): KpiDefinition {
   return {
     id: k.id,
+    domain: k.domain,
     name: k.name,
     formula: k.formula,
     owner: k.owner,
@@ -207,6 +208,7 @@ export function mapKpiDefinition(k: DbKpiDefinition): KpiDefinition {
     target: k.target,
     threshold: k.threshold,
     priority: k.priority,
+    type: k.type,
     status: k.status,
     effectiveDate: k.effectiveDate,
   };

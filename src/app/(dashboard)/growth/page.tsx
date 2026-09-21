@@ -15,10 +15,32 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { mapStat, mapContentItem, mapIntentAccount } from "@/lib/db-mappers";
+import { mapStat, mapContentItem, mapIntentAccount, mapKpiDefinition } from "@/lib/db-mappers";
+import { FlowSteps } from "@/components/dashboard/flow-steps";
+
+const MARKETING_KPI_FUNNEL = [
+  "Authority content",
+  "ICP engagement",
+  "Intent signal",
+  "Qualified meeting",
+  "Marketing-sourced pipeline",
+  "Booked revenue influence",
+] as const;
+
+const MARKETING_WORKFLOW_STEPS = [
+  "Plan POV",
+  "Publish content",
+  "Capture engagement",
+  "Score intent",
+  "Create/Update Account",
+  "Route to Sales",
+  "Nurture / learn",
+] as const;
+
+const MARKETING_CHANNELS = ["LinkedIn", "Website", "Newsletter", "INDX", "Webinars", "Partners"];
 
 export default async function GrowthPage() {
-  const [marketingStatRows, salesStatRows, marketingBrief, contentRows, intentRows, revenueGoal] =
+  const [marketingStatRows, salesStatRows, marketingBrief, contentRows, intentRows, revenueGoal, marketingKpiRows] =
     await Promise.all([
       prisma.dashboardStat.findMany({ where: { page: "growth-marketing" }, orderBy: { order: "asc" } }),
       prisma.dashboardStat.findMany({ where: { page: "growth-sales" }, orderBy: { order: "asc" } }),
@@ -26,6 +48,7 @@ export default async function GrowthPage() {
       prisma.contentItem.findMany(),
       prisma.intentAccount.findMany(),
       prisma.revenueGoal.findUnique({ where: { scope: "default" } }),
+      prisma.kpiDefinition.findMany({ where: { domain: "Marketing" }, orderBy: { priority: "asc" } }),
     ]);
 
   const marketingStats = marketingStatRows.map(mapStat);
@@ -33,6 +56,7 @@ export default async function GrowthPage() {
   const marketingAiSummary = marketingBrief?.content ?? "";
   const contentItems = contentRows.map(mapContentItem);
   const intentAccounts = intentRows.map(mapIntentAccount);
+  const marketingKpis = marketingKpiRows.map(mapKpiDefinition);
 
   if (!revenueGoal) return null;
 
@@ -89,13 +113,47 @@ export default async function GrowthPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="marketing" className="mt-4 space-y-4">
-          <h2 className="text-sm font-semibold">From attention to qualified demand</h2>
+        <TabsContent value="marketing" className="mt-4 space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-sm font-semibold">Marketing KPI architecture</h2>
+            <p className="text-xs text-muted-foreground">
+              Shift from reach-first to demand creation + intent + qualified demand.
+            </p>
+            <FlowSteps steps={MARKETING_KPI_FUNNEL} />
+          </div>
+
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {marketingStats.map((kpi) => (
               <KpiCard key={kpi.id} kpi={kpi} />
             ))}
           </div>
+
+          <div className="overflow-hidden rounded-lg border bg-card">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Pri</TableHead>
+                  <TableHead>KPI</TableHead>
+                  <TableHead>Formula / definition</TableHead>
+                  <TableHead>Type</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {marketingKpis.map((k) => (
+                  <TableRow key={k.id}>
+                    <TableCell className="text-sm text-muted-foreground">{k.priority}</TableCell>
+                    <TableCell className="text-sm font-medium">{k.name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{k.formula}</TableCell>
+                    <TableCell className="text-sm">{k.type}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Diagnostic only: followers, impressions, likes, generic engagement, newsletter list
+            growth, views.
+          </p>
 
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="overflow-hidden rounded-lg border bg-card lg:col-span-2">
@@ -146,6 +204,43 @@ export default async function GrowthPage() {
                 </Button>
               </div>
             ))}
+          </div>
+
+          <div className="space-y-3 rounded-lg bg-brand-ink p-5 text-white">
+            <div>
+              <h2 className="text-sm font-semibold">Marketing workflow + data sources</h2>
+              <p className="text-xs text-white/60">
+                Content and campaigns generate signals; signals route accounts into the CRM.
+              </p>
+            </div>
+            <FlowSteps steps={MARKETING_WORKFLOW_STEPS} />
+            <div className="flex flex-wrap gap-2">
+              {MARKETING_CHANNELS.map((c) => (
+                <span key={c} className="rounded-md border border-white/15 px-2.5 py-1 text-xs text-white/80">
+                  {c}
+                </span>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-md border border-white/15 p-3">
+                <p className="text-xs font-medium text-white/70">Data objects</p>
+                <p className="mt-1 text-xs text-white/60">
+                  Content_ID · Channel · Account_ID · Contact_ID · Signal_ID · Signal_Score · Campaign_ID
+                </p>
+              </div>
+              <div className="rounded-md border border-white/15 p-3">
+                <p className="text-xs font-medium text-white/70">Automation</p>
+                <p className="mt-1 text-xs text-white/60">
+                  Signal capture → account enrichment → score update → CRM task / nurture sequence
+                </p>
+              </div>
+              <div className="rounded-md border border-white/15 p-3">
+                <p className="text-xs font-medium text-white/70">Alert</p>
+                <p className="mt-1 text-xs text-white/60">
+                  Tier-1 signal score ≥40: owner receives human outreach task within SLA.
+                </p>
+              </div>
+            </div>
           </div>
         </TabsContent>
       </Tabs>

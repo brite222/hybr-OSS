@@ -45,3 +45,6 @@ next-env.d.ts
 # local dev server logs (used for smoke-testing)
 .dev-out.log
 .dev-err.log
+
+# Claude Code session-local runtime state
+.claude/scheduled_tasks.lock

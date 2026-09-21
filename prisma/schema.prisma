@@ -278,6 +278,9 @@ enum KpiPriority {
   P1
   P2
   P3
+  P4
+  P5
+  P6
 }
 
 enum KpiStatus {
@@ -286,8 +289,18 @@ enum KpiStatus {
   Deprecated
 }
 
+enum KpiType {
+  Leading
+  Pipeline
+  Outcome
+  Execution
+  Risk
+  Financial
+}
+
 model KpiDefinition {
   id            String      @id @default(cuid())
+  domain        String
   name          String
   formula       String
   owner         String
@@ -296,6 +309,7 @@ model KpiDefinition {
   target        String
   threshold     String
   priority      KpiPriority
+  type          KpiType
   status        KpiStatus
   effectiveDate String
 }

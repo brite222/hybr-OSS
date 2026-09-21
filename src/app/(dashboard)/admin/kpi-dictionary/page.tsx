@@ -19,7 +19,7 @@ const STATUS_LEVEL: Record<KpiDefinition["status"], AlertLevel> = {
 };
 
 export default async function KpiDictionaryPage() {
-  const rows = await prisma.kpiDefinition.findMany();
+  const rows = await prisma.kpiDefinition.findMany({ orderBy: [{ domain: "asc" }, { priority: "asc" }] });
   const kpiDictionary = rows.map(mapKpiDefinition);
 
   return (
@@ -30,20 +30,24 @@ export default async function KpiDictionaryPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Domain</TableHead>
               <TableHead>KPI</TableHead>
               <TableHead>Owner</TableHead>
               <TableHead>Formula</TableHead>
               <TableHead>Priority</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {kpiDictionary.map((k) => (
               <TableRow key={k.id}>
+                <TableCell className="text-sm text-muted-foreground">{k.domain}</TableCell>
                 <TableCell className="text-sm font-medium">{k.name}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">{k.owner}</TableCell>
-                <TableCell className="max-w-72 truncate text-sm text-muted-foreground">{k.formula}</TableCell>
+                <TableCell className="max-w-64 truncate text-sm text-muted-foreground">{k.formula}</TableCell>
                 <TableCell className="text-sm">{k.priority}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{k.type}</TableCell>
                 <TableCell>
                   <StatusBadge level={STATUS_LEVEL[k.status]} label={k.status} />
                 </TableCell>

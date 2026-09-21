@@ -201,8 +201,11 @@ export type StrategicPriority = {
   note: string;
 };
 
+export type KpiType = "Leading" | "Pipeline" | "Outcome" | "Execution" | "Risk" | "Financial";
+
 export type KpiDefinition = {
   id: string;
+  domain: string;
   name: string;
   formula: string;
   owner: string;
@@ -210,7 +213,8 @@ export type KpiDefinition = {
   cadence: string;
   target: string;
   threshold: string;
-  priority: "P1" | "P2" | "P3";
+  priority: "P1" | "P2" | "P3" | "P4" | "P5" | "P6";
+  type: KpiType;
   status: "Active" | "Draft" | "Deprecated";
   effectiveDate: string;
 };
