@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -34,10 +35,12 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
         <ChevronDown className="size-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
-          <p className="font-medium">{name}</p>
-          <p className="font-normal text-muted-foreground">{email}</p>
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <p className="font-medium">{name}</p>
+            <p className="font-normal text-muted-foreground">{email}</p>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={() => logout()}>
           <LogOut className="size-4" />
