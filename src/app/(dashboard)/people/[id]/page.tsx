@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { peopleCapacity } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapPersonCapacity } from "@/lib/db-mappers";
 
 export default async function TeamMemberProfilePage({
   params,
@@ -9,8 +10,9 @@ export default async function TeamMemberProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const person = peopleCapacity.find((p) => p.id === id);
-  if (!person) notFound();
+  const row = await prisma.personCapacity.findUnique({ where: { id } });
+  if (!row) notFound();
+  const person = mapPersonCapacity(row);
 
   const initials = person.name
     .split(" ")

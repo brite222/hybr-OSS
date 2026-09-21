@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { AiInsightCard } from "@/components/dashboard/ai-insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { invoices } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapInvoice } from "@/lib/db-mappers";
 import { formatCurrency } from "@/lib/format";
 
 export default async function InvoiceDetailPage({
@@ -11,8 +12,9 @@ export default async function InvoiceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const invoice = invoices.find((i) => i.id === id);
-  if (!invoice) notFound();
+  const row = await prisma.invoice.findUnique({ where: { id } });
+  if (!row) notFound();
+  const invoice = mapInvoice(row);
 
   return (
     <div className="space-y-6">

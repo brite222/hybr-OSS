@@ -1,9 +1,13 @@
 import { AlertCard } from "@/components/dashboard/alert-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { attentionAlerts } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapAlert } from "@/lib/db-mappers";
 
-export default function IntelligencePage() {
+export default async function IntelligencePage() {
+  const alerts = await prisma.alertItem.findMany();
+  const attentionAlerts = alerts.map(mapAlert);
+
   return (
     <div className="space-y-6">
       <SectionHeader eyebrow="Alert center" title="Actionable exception management" />

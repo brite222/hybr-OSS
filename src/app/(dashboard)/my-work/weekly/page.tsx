@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { weeklyPriorities } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
 
-export default function WeeklyPrioritiesPage() {
+export default async function WeeklyPrioritiesPage() {
+  const weeklyPriorities = await prisma.weeklyPriority.findMany();
+
   return (
     <div className="space-y-6">
       <SectionHeader

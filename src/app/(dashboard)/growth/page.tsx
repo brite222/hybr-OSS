@@ -13,17 +13,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  marketingStats,
-  marketingAiSummary,
-  contentItems,
-  intentAccounts,
-  salesRevenueClock,
-  revenueGoal,
-} from "@/lib/mock-data";
 import { formatCurrency } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapContentItem, mapIntentAccount } from "@/lib/db-mappers";
 
-export default function GrowthPage() {
+export default async function GrowthPage() {
+  const [marketingStatRows, salesStatRows, marketingBrief, contentRows, intentRows, revenueGoal] =
+    await Promise.all([
+      prisma.dashboardStat.findMany({ where: { page: "growth-marketing" }, orderBy: { order: "asc" } }),
+      prisma.dashboardStat.findMany({ where: { page: "growth-sales" }, orderBy: { order: "asc" } }),
+      prisma.aiBrief.findUnique({ where: { scope: "growth-marketing" } }),
+      prisma.contentItem.findMany(),
+      prisma.intentAccount.findMany(),
+      prisma.revenueGoal.findUnique({ where: { scope: "default" } }),
+    ]);
+
+  const marketingStats = marketingStatRows.map(mapStat);
+  const salesRevenueClock = salesStatRows.map(mapStat);
+  const marketingAiSummary = marketingBrief?.content ?? "";
+  const contentItems = contentRows.map(mapContentItem);
+  const intentAccounts = intentRows.map(mapIntentAccount);
+
+  if (!revenueGoal) return null;
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { experiments } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapExperiment } from "@/lib/db-mappers";
 
 export default async function ExperimentDetailPage({
   params,
@@ -9,8 +10,9 @@ export default async function ExperimentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const experiment = experiments.find((e) => e.id === id);
-  if (!experiment) notFound();
+  const row = await prisma.experiment.findUnique({ where: { id } });
+  if (!row) notFound();
+  const experiment = mapExperiment(row);
 
   return (
     <div className="space-y-6">

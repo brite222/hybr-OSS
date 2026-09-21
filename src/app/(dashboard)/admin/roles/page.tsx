@@ -7,9 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { roleAccess } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapRoleAccess } from "@/lib/db-mappers";
 
-export default function RolesPage() {
+export default async function RolesPage() {
+  const rows = await prisma.roleAccess.findMany();
+  const roleAccess = rows.map(mapRoleAccess);
+
   return (
     <div className="space-y-6">
       <SectionHeader

@@ -8,7 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { kpiDictionary } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapKpiDefinition } from "@/lib/db-mappers";
 import type { AlertLevel, KpiDefinition } from "@/lib/types";
 
 const STATUS_LEVEL: Record<KpiDefinition["status"], AlertLevel> = {
@@ -17,7 +18,10 @@ const STATUS_LEVEL: Record<KpiDefinition["status"], AlertLevel> = {
   Deprecated: "info",
 };
 
-export default function KpiDictionaryPage() {
+export default async function KpiDictionaryPage() {
+  const rows = await prisma.kpiDefinition.findMany();
+  const kpiDictionary = rows.map(mapKpiDefinition);
+
   return (
     <div className="space-y-6">
       <SectionHeader eyebrow="Admin — KPI Dictionary" title="One interface to define every metric" />

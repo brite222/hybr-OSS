@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { peopleCapacity } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapPersonCapacity } from "@/lib/db-mappers";
 import type { AlertLevel, PersonCapacity } from "@/lib/types";
 
 const STATUS_LEVEL: Record<PersonCapacity["status"], AlertLevel> = {
@@ -19,7 +20,10 @@ const STATUS_LEVEL: Record<PersonCapacity["status"], AlertLevel> = {
   Watch: "amber",
 };
 
-export default function CapacityPage() {
+export default async function CapacityPage() {
+  const rows = await prisma.personCapacity.findMany();
+  const peopleCapacity = rows.map(mapPersonCapacity);
+
   return (
     <div className="space-y-6">
       <SectionHeader

@@ -2,9 +2,18 @@ import { KpiCard } from "@/components/dashboard/kpi-card";
 import { AlertCard } from "@/components/dashboard/alert-card";
 import { AiInsightCard } from "@/components/dashboard/ai-insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { ceoScorecard, attentionAlerts } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapAlert } from "@/lib/db-mappers";
 
-export default function PerformancePage() {
+export default async function PerformancePage() {
+  const [stats, alerts, brief] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "performance" }, orderBy: { order: "asc" } }),
+    prisma.alertItem.findMany(),
+    prisma.aiBrief.findUnique({ where: { scope: "performance" } }),
+  ]);
+  const ceoScorecard = stats.map(mapStat);
+  const attentionAlerts = alerts.map(mapAlert);
+
   return (
     <div className="space-y-6">
       <SectionHeader
@@ -25,10 +34,11 @@ export default function PerformancePage() {
             <AlertCard key={alert.id} alert={alert} />
           ))}
         </div>
-        <AiInsightCard title="AI executive brief" secondaryLabel="Create actions">
-          The biggest risk is insufficient qualified pipeline for the next 90 days. Three high-intent
-          accounts need human follow-up this week.
-        </AiInsightCard>
+        {brief && (
+          <AiInsightCard title="AI executive brief" secondaryLabel="Create actions">
+            {brief.content}
+          </AiInsightCard>
+        )}
       </div>
     </div>
   );

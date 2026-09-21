@@ -6,9 +6,13 @@ import { ActionRow } from "@/components/dashboard/action-row";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ACTION_STATUSES } from "@/lib/types";
-import { myActions } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapAction } from "@/lib/db-mappers";
 
-export default function MyWorkPage() {
+export default async function MyWorkPage() {
+  const dbActions = await prisma.action.findMany({ orderBy: { createdAt: "asc" } });
+  const myActions = dbActions.map(mapAction);
+
   const dueToday = myActions.filter((a) => a.status === "Today").length;
   const overdue = myActions.filter((a) => a.status === "Overdue").length;
   const blocked = myActions.filter((a) => a.blocked).length;

@@ -7,9 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { auditLog } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapAuditLogEntry } from "@/lib/db-mappers";
 
-export default function AuditLogsPage() {
+export default async function AuditLogsPage() {
+  const rows = await prisma.auditLogEntry.findMany({ orderBy: { timestamp: "desc" } });
+  const auditLog = rows.map(mapAuditLogEntry);
+
   return (
     <div className="space-y-6">
       <SectionHeader eyebrow="Admin — Audit logs" title="Trace who changed what, when and why" />

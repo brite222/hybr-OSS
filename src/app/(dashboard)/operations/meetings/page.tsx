@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { meetings } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapMeeting } from "@/lib/db-mappers";
 import type { AlertLevel, MeetingStatus } from "@/lib/types";
 
 const STATUS_LEVEL: Record<MeetingStatus, AlertLevel> = {
@@ -19,7 +20,10 @@ const STATUS_LEVEL: Record<MeetingStatus, AlertLevel> = {
   Upcoming: "info",
 };
 
-export default function MeetingsPage() {
+export default async function MeetingsPage() {
+  const rows = await prisma.meeting.findMany();
+  const meetings = rows.map(mapMeeting);
+
   return (
     <div className="space-y-6">
       <SectionHeader eyebrow="Meetings" title="Workspace for agendas, decisions, notes and actions" />

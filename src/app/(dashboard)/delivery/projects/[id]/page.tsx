@@ -12,7 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { projects } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapProject } from "@/lib/db-mappers";
 import { formatCurrency } from "@/lib/format";
 
 export default async function ProjectDetailPage({
@@ -21,8 +22,9 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = projects.find((p) => p.id === id);
-  if (!project) notFound();
+  const row = await prisma.project.findUnique({ where: { id } });
+  if (!row) notFound();
+  const project = mapProject(row);
 
   return (
     <div className="space-y-6">

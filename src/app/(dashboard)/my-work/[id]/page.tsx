@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { myActions } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapAction } from "@/lib/db-mappers";
 
 export default async function ActionDetailPage({
   params,
@@ -9,8 +10,9 @@ export default async function ActionDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const action = myActions.find((a) => a.id === id);
-  if (!action) notFound();
+  const dbAction = await prisma.action.findUnique({ where: { id } });
+  if (!dbAction) notFound();
+  const action = mapAction(dbAction);
 
   return (
     <div className="space-y-6">

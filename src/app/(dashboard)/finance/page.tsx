@@ -13,10 +13,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { financeStats, revenueFlow, invoices } from "@/lib/mock-data";
 import { formatCurrency } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapInvoice } from "@/lib/db-mappers";
 
-export default function FinancePage() {
+export default async function FinancePage() {
+  const [statRows, flowRows, invoiceRows] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "finance" }, orderBy: { order: "asc" } }),
+    prisma.dashboardStat.findMany({ where: { page: "finance-flow" }, orderBy: { order: "asc" } }),
+    prisma.invoice.findMany(),
+  ]);
+  const financeStats = statRows.map(mapStat);
+  const revenueFlow = flowRows.map((s) => ({ id: s.key, label: s.label, value: s.value }));
+  const invoices = invoiceRows.map(mapInvoice);
+
   return (
     <div className="space-y-6">
       <SectionHeader

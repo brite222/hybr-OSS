@@ -1,8 +1,16 @@
 import { CashForecastChart } from "@/components/dashboard/cash-forecast-chart";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { cashForecast, cashGapTrigger } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapCashWeek } from "@/lib/db-mappers";
 
-export default function ForecastPage() {
+export default async function ForecastPage() {
+  const [weekRows, brief] = await Promise.all([
+    prisma.cashWeek.findMany({ orderBy: { week: "asc" } }),
+    prisma.aiBrief.findUnique({ where: { scope: "finance-forecast" } }),
+  ]);
+  const cashForecast = weekRows.map(mapCashWeek);
+  const cashGapTrigger = brief?.content ?? "";
+
   return (
     <div className="space-y-6">
       <SectionHeader

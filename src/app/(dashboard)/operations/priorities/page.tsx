@@ -1,7 +1,9 @@
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { strategicPriorities } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
 
-export default function StrategicPrioritiesPage() {
+export default async function StrategicPrioritiesPage() {
+  const strategicPriorities = await prisma.strategicPriority.findMany();
+
   return (
     <div className="space-y-6">
       <SectionHeader

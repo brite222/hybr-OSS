@@ -12,7 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { deliveryStats, projects } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapProject } from "@/lib/db-mappers";
 import type { AlertLevel, Project } from "@/lib/types";
 
 const STATUS_LEVEL: Record<Project["status"], AlertLevel> = {
@@ -21,7 +22,14 @@ const STATUS_LEVEL: Record<Project["status"], AlertLevel> = {
   "At Risk": "red",
 };
 
-export default function DeliveryPage() {
+export default async function DeliveryPage() {
+  const [statRows, projectRows] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "delivery" }, orderBy: { order: "asc" } }),
+    prisma.project.findMany(),
+  ]);
+  const deliveryStats = statRows.map(mapStat);
+  const projects = projectRows.map(mapProject);
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">

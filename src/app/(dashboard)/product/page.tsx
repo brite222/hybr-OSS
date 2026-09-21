@@ -11,7 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { productStats, experiments } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapExperiment } from "@/lib/db-mappers";
 import type { AlertLevel, ExperimentStatus } from "@/lib/types";
 
 const STATUS_LEVEL: Record<ExperimentStatus, AlertLevel> = {
@@ -22,7 +23,14 @@ const STATUS_LEVEL: Record<ExperimentStatus, AlertLevel> = {
 
 const PRODUCT_FLOW = ["Opportunity", "Insight", "Experiment", "Prototype", "Validation", "Adoption", "Value"] as const;
 
-export default function ProductPage() {
+export default async function ProductPage() {
+  const [statRows, experimentRows] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "product" }, orderBy: { order: "asc" } }),
+    prisma.experiment.findMany(),
+  ]);
+  const productStats = statRows.map(mapStat);
+  const experiments = experimentRows.map(mapExperiment);
+
   return (
     <div className="space-y-6">
       <SectionHeader

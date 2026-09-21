@@ -12,7 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { peopleStats, teamCapacity, peopleCapacity } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapTeamCapacity, mapPersonCapacity } from "@/lib/db-mappers";
 
 function initialsOf(name: string) {
   return name
@@ -23,7 +24,16 @@ function initialsOf(name: string) {
     .toUpperCase();
 }
 
-export default function PeoplePage() {
+export default async function PeoplePage() {
+  const [statRows, teamRows, personRows] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "people" }, orderBy: { order: "asc" } }),
+    prisma.teamCapacity.findMany(),
+    prisma.personCapacity.findMany(),
+  ]);
+  const peopleStats = statRows.map(mapStat);
+  const teamCapacity = teamRows.map(mapTeamCapacity);
+  const peopleCapacity = personRows.map(mapPersonCapacity);
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">

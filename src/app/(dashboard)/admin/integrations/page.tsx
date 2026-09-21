@@ -1,8 +1,12 @@
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { StatusDot } from "@/components/dashboard/status-badge";
-import { integrationSources } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapIntegrationSource } from "@/lib/db-mappers";
 
-export default function IntegrationsPage() {
+export default async function IntegrationsPage() {
+  const rows = await prisma.integrationSource.findMany();
+  const integrationSources = rows.map(mapIntegrationSource);
+
   return (
     <div className="space-y-6">
       <SectionHeader

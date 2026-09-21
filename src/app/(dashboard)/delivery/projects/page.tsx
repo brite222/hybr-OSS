@@ -1,8 +1,12 @@
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { ProjectCard } from "@/components/dashboard/project-card";
-import { projects } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapProject } from "@/lib/db-mappers";
 
-export default function ProjectPortfolioPage() {
+export default async function ProjectPortfolioPage() {
+  const rows = await prisma.project.findMany();
+  const projects = rows.map(mapProject);
+
   return (
     <div className="space-y-6">
       <SectionHeader

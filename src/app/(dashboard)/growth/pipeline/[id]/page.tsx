@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { AiInsightCard } from "@/components/dashboard/ai-insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { opportunities } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapOpportunity } from "@/lib/db-mappers";
 import { formatCurrency } from "@/lib/format";
 
 export default async function OpportunityDetailPage({
@@ -11,8 +12,9 @@ export default async function OpportunityDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const opportunity = opportunities.find((o) => o.id === id);
-  if (!opportunity) notFound();
+  const row = await prisma.opportunity.findUnique({ where: { id } });
+  if (!row) notFound();
+  const opportunity = mapOpportunity(row);
 
   return (
     <div className="space-y-6">

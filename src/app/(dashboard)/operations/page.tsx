@@ -11,9 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { operationsStats, departmentExecution } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapStat, mapDepartmentExecution } from "@/lib/db-mappers";
 
-export default function OperationsPage() {
+export default async function OperationsPage() {
+  const [statRows, deptRows] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "operations" }, orderBy: { order: "asc" } }),
+    prisma.departmentExecution.findMany(),
+  ]);
+  const operationsStats = statRows.map(mapStat);
+  const departmentExecution = deptRows.map(mapDepartmentExecution);
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">

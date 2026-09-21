@@ -1,8 +1,12 @@
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { PipelineBoard } from "@/components/dashboard/pipeline-board";
-import { opportunities } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapOpportunity } from "@/lib/db-mappers";
 
-export default function PipelinePage() {
+export default async function PipelinePage() {
+  const rows = await prisma.opportunity.findMany();
+  const opportunities = rows.map(mapOpportunity);
+
   return (
     <div className="space-y-6">
       <SectionHeader

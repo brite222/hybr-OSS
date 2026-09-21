@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/dashboard/section-header";
-import { meetings } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapMeeting } from "@/lib/db-mappers";
 
 export default async function MeetingDetailPage({
   params,
@@ -9,8 +10,9 @@ export default async function MeetingDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const meeting = meetings.find((m) => m.id === id);
-  if (!meeting) notFound();
+  const row = await prisma.meeting.findUnique({ where: { id } });
+  if (!row) notFound();
+  const meeting = mapMeeting(row);
 
   return (
     <div className="space-y-6">

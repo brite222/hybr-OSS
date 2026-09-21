@@ -9,10 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { invoices } from "@/lib/mock-data";
+import { prisma } from "@/lib/prisma";
+import { mapInvoice } from "@/lib/db-mappers";
 import { formatCurrency } from "@/lib/format";
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const rows = await prisma.invoice.findMany();
+  const invoices = rows.map(mapInvoice);
+
   return (
     <div className="space-y-6">
       <SectionHeader
