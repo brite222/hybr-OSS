@@ -165,3 +165,38 @@ export type Project = {
   risks: ProjectRisk[];
   outcome?: ClientOutcome;
 };
+
+export type DepartmentExecution = {
+  owner: string;
+  assigned: number;
+  done: number;
+  late: number;
+  score: number;
+};
+
+export type MeetingStatus = "Ready" | "Draft" | "Published" | "Upcoming";
+
+export type Meeting = {
+  id: string;
+  title: string;
+  when: string;
+  owner: string;
+  actionsCount: number;
+  status: MeetingStatus;
+  agenda: string[];
+  decisions: string[];
+  aiDetected: {
+    decisions: number;
+    actions: number;
+    risks: number;
+    overdueFollowUps: number;
+  };
+};
+
+export type StrategicPriority = {
+  id: string;
+  title: string;
+  owner: string;
+  progress: number;
+  note: string;
+};

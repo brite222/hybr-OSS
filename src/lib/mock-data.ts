@@ -3,10 +3,13 @@ import type {
   AlertItem,
   CashWeek,
   ContentItem,
+  DepartmentExecution,
   Invoice,
   Kpi,
+  Meeting,
   Opportunity,
   Project,
+  StrategicPriority,
   WeeklyPriority,
 } from "@/lib/types";
 
@@ -559,4 +562,74 @@ export const projects: Project[] = [
     aiRiskNote: "On track to close this week with no open risks.",
     risks: [],
   },
+];
+
+// --- Operations ---
+
+export const operationsStats: Kpi[] = [
+  { id: "company-execution", label: "Company Execution", value: "87%", sublabel: "Actions completed / due", level: "green" },
+  { id: "on-time", label: "On-Time Execution", value: "79%", sublabel: "Target 85%", level: "amber" },
+  { id: "overdue-rate", label: "Overdue Rate", value: "11%", sublabel: "Of actions", level: "amber" },
+  { id: "strategic-priority", label: "Strategic Priority", value: "72%", sublabel: "This quarter", level: "green" },
+  { id: "blocker-resolution", label: "Blocker Resolution Time", value: "2.8d", sublabel: "Avg days", level: "green" },
+];
+
+export const departmentExecution: DepartmentExecution[] = [
+  { owner: "Growth", assigned: 18, done: 16, late: 1, score: 89 },
+  { owner: "Delivery", assigned: 22, done: 17, late: 4, score: 77 },
+  { owner: "Product", assigned: 11, done: 10, late: 0, score: 91 },
+];
+
+export const meetings: Meeting[] = [
+  {
+    id: "gtm-check-in",
+    title: "GTM Check-In",
+    when: "Fri, this week",
+    owner: "Growth",
+    actionsCount: 7,
+    status: "Ready",
+    agenda: ["Revenue clock", "Scorecard exceptions", "Pipeline movement", "Demand & signals", "Experiments", "Commitments"],
+    decisions: ["Prioritize Bank X", "Pause TikTok test", "Move DFI proposal to CEO"],
+    aiDetected: { decisions: 3, actions: 7, risks: 2, overdueFollowUps: 1 },
+  },
+  {
+    id: "project-review",
+    title: "Project Review",
+    when: "Tue",
+    owner: "Project Manager",
+    actionsCount: 4,
+    status: "Draft",
+    agenda: ["Milestone status", "Budget review", "Risk register"],
+    decisions: ["Extend Prototype Sprint validation by one week"],
+    aiDetected: { decisions: 1, actions: 4, risks: 1, overdueFollowUps: 0 },
+  },
+  {
+    id: "leadership-review",
+    title: "Leadership Review",
+    when: "Mon, this week",
+    owner: "CEO",
+    actionsCount: 12,
+    status: "Published",
+    agenda: ["Enterprise scorecard", "Cash position", "Delivery risk", "People capacity"],
+    decisions: ["Approve HYBR OS MVP scope", "Escalate Client D collection to CEO"],
+    aiDetected: { decisions: 2, actions: 12, risks: 3, overdueFollowUps: 2 },
+  },
+  {
+    id: "one-on-ones",
+    title: "1:1s",
+    when: "This week",
+    owner: "Lead",
+    actionsCount: 3,
+    status: "Upcoming",
+    agenda: ["Priorities", "Capacity", "Development goals"],
+    decisions: [],
+    aiDetected: { decisions: 0, actions: 3, risks: 0, overdueFollowUps: 0 },
+  },
+];
+
+export const strategicPriorities: StrategicPriority[] = [
+  { id: "sp1", title: "$1M GTM System", owner: "Growth Lead", progress: 72, note: "Pipeline coverage below target" },
+  { id: "sp2", title: "HYBR OS MVP", owner: "Project Lead", progress: 58, note: "UX review pending" },
+  { id: "sp3", title: "3D Productization", owner: "Product Lead", progress: 35, note: "Needs test users" },
+  { id: "sp4", title: "Key Client Expansion", owner: "Delivery Lead", progress: 62, note: "2 expansion signals" },
 ];
