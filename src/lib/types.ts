@@ -92,6 +92,18 @@ export type ContentItem = {
   pipeline: number;
 };
 
+export type SocialMediaStat = {
+  id: string;
+  platform: string;
+  periodLabel: string;
+  followers?: number;
+  impressions?: number;
+  likes?: number;
+  views?: number;
+  listGrowth?: number;
+  source: string;
+};
+
 export type InvoiceStatus = "Due" | "Overdue" | "Paid";
 
 export type Invoice = {

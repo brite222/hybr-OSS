@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { mapStat, mapContentItem, mapIntentAccount, mapKpiDefinition } from "@/lib/db-mappers";
+import { mapStat, mapContentItem, mapIntentAccount, mapKpiDefinition, mapSocialMediaStat } from "@/lib/db-mappers";
 import { FlowSteps } from "@/components/dashboard/flow-steps";
 
 const MARKETING_KPI_FUNNEL = [
@@ -40,16 +40,25 @@ const MARKETING_WORKFLOW_STEPS = [
 const MARKETING_CHANNELS = ["LinkedIn", "Website", "Newsletter", "INDX", "Webinars", "Partners"];
 
 export default async function GrowthPage() {
-  const [marketingStatRows, salesStatRows, marketingBrief, contentRows, intentRows, revenueGoal, marketingKpiRows] =
-    await Promise.all([
-      prisma.dashboardStat.findMany({ where: { page: "growth-marketing" }, orderBy: { order: "asc" } }),
-      prisma.dashboardStat.findMany({ where: { page: "growth-sales" }, orderBy: { order: "asc" } }),
-      prisma.aiBrief.findUnique({ where: { scope: "growth-marketing" } }),
-      prisma.contentItem.findMany(),
-      prisma.intentAccount.findMany(),
-      prisma.revenueGoal.findUnique({ where: { scope: "default" } }),
-      prisma.kpiDefinition.findMany({ where: { domain: "Marketing" }, orderBy: { priority: "asc" } }),
-    ]);
+  const [
+    marketingStatRows,
+    salesStatRows,
+    marketingBrief,
+    contentRows,
+    intentRows,
+    revenueGoal,
+    marketingKpiRows,
+    socialStatRows,
+  ] = await Promise.all([
+    prisma.dashboardStat.findMany({ where: { page: "growth-marketing" }, orderBy: { order: "asc" } }),
+    prisma.dashboardStat.findMany({ where: { page: "growth-sales" }, orderBy: { order: "asc" } }),
+    prisma.aiBrief.findUnique({ where: { scope: "growth-marketing" } }),
+    prisma.contentItem.findMany(),
+    prisma.intentAccount.findMany(),
+    prisma.revenueGoal.findUnique({ where: { scope: "default" } }),
+    prisma.kpiDefinition.findMany({ where: { domain: "Marketing" }, orderBy: { priority: "asc" } }),
+    prisma.socialMediaStat.findMany({ orderBy: { platform: "asc" } }),
+  ]);
 
   const marketingStats = marketingStatRows.map(mapStat);
   const salesRevenueClock = salesStatRows.map(mapStat);
@@ -57,6 +66,7 @@ export default async function GrowthPage() {
   const contentItems = contentRows.map(mapContentItem);
   const intentAccounts = intentRows.map(mapIntentAccount);
   const marketingKpis = marketingKpiRows.map(mapKpiDefinition);
+  const socialStats = socialStatRows.map(mapSocialMediaStat);
 
   if (!revenueGoal) return null;
 
@@ -154,6 +164,53 @@ export default async function GrowthPage() {
             Diagnostic only: followers, impressions, likes, generic engagement, newsletter list
             growth, views.
           </p>
+
+          <div className="rounded-lg border border-dashed p-4">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-sm font-semibold text-muted-foreground">Social reach (diagnostic)</h2>
+              <span className="rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                Not linked to pipeline
+              </span>
+            </div>
+            {socialStats.length === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                No social data received yet. Once reporting is automated, it can post here via the{" "}
+                <code className="rounded bg-secondary px-1 py-0.5 text-xs">
+                  POST /api/webhooks/social-stats
+                </code>{" "}
+                endpoint.
+              </p>
+            ) : (
+              <div className="mt-3 overflow-hidden rounded-lg border bg-card">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Platform</TableHead>
+                      <TableHead>Period</TableHead>
+                      <TableHead>Followers</TableHead>
+                      <TableHead>Impressions</TableHead>
+                      <TableHead>Likes</TableHead>
+                      <TableHead>Views</TableHead>
+                      <TableHead>List growth</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {socialStats.map((s) => (
+                      <TableRow key={s.id}>
+                        <TableCell className="text-sm font-medium">{s.platform}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{s.periodLabel}</TableCell>
+                        <TableCell className="text-sm">{s.followers ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{s.impressions ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{s.likes ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{s.views ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{s.listGrowth ?? "—"}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="overflow-hidden rounded-lg border bg-card lg:col-span-2">

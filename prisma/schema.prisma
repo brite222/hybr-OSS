@@ -178,6 +178,24 @@ model IntentAccount {
   signal String
 }
 
+// Diagnostic-only reach metrics — never used to drive KPIs or pipeline credit.
+// Populated by whoever/whatever automates social reporting, via the webhook
+// at /api/webhooks/social-stats (see that route for the payload contract).
+model SocialMediaStat {
+  id          String   @id @default(cuid())
+  platform    String
+  periodLabel String
+  followers   Int?
+  impressions Int?
+  likes       Int?
+  views       Int?
+  listGrowth  Int?
+  source      String   @default("manual")
+  updatedAt   DateTime @updatedAt
+
+  @@unique([platform, periodLabel])
+}
+
 // --- Finance ---
 
 enum InvoiceStatus {

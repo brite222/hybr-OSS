@@ -19,11 +19,13 @@ import type {
   PersonCapacity as DbPersonCapacity,
   DashboardStat as DbDashboardStat,
   WeeklyPriority as DbWeeklyPriority,
+  SocialMediaStat as DbSocialMediaStat,
 } from "@/generated/prisma/client";
 import type {
   ActionItem,
   AlertItem,
   ContentItem,
+  SocialMediaStat,
   BuyingGroupMember,
   ActivityEvent,
   Opportunity,
@@ -117,6 +119,20 @@ export function mapContentItem(c: DbContentItem): ContentItem {
 
 export function mapIntentAccount(a: DbIntentAccount) {
   return { id: a.id, name: a.name, score: a.score, signal: a.signal };
+}
+
+export function mapSocialMediaStat(s: DbSocialMediaStat): SocialMediaStat {
+  return {
+    id: s.id,
+    platform: s.platform,
+    periodLabel: s.periodLabel,
+    followers: s.followers ?? undefined,
+    impressions: s.impressions ?? undefined,
+    likes: s.likes ?? undefined,
+    views: s.views ?? undefined,
+    listGrowth: s.listGrowth ?? undefined,
+    source: s.source,
+  };
 }
 
 export function mapOpportunity(o: DbOpportunity): Opportunity {
