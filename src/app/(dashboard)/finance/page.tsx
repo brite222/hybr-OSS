@@ -40,10 +40,10 @@ export default function FinancePage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" render={<Link href="/finance/collections" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/finance/collections" />}>
           Collections <ArrowRight className="size-4" />
         </Button>
-        <Button variant="outline" render={<Link href="/finance/forecast" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/finance/forecast" />}>
           13-week forecast <ArrowRight className="size-4" />
         </Button>
       </div>

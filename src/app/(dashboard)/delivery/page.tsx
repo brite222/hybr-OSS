@@ -26,7 +26,12 @@ export default function DeliveryPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <SectionHeader eyebrow="Delivery" title="On time, quality, profitable and valuable" />
-        <Button variant="outline" className="shrink-0" render={<Link href="/delivery/projects" />}>
+        <Button
+          variant="outline"
+          className="shrink-0"
+          nativeButton={false}
+          render={<Link href="/delivery/projects" />}
+        >
           Project portfolio <ArrowRight className="size-4" />
         </Button>
       </div>

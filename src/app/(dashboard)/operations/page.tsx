@@ -19,10 +19,10 @@ export default function OperationsPage() {
       <div className="flex items-start justify-between gap-4">
         <SectionHeader eyebrow="Operations" title="The organization's execution layer" />
         <div className="flex shrink-0 gap-2">
-          <Button variant="outline" render={<Link href="/operations/priorities" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/operations/priorities" />}>
             Strategic priorities <ArrowRight className="size-4" />
           </Button>
-          <Button variant="outline" render={<Link href="/operations/meetings" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/operations/meetings" />}>
             Meetings <ArrowRight className="size-4" />
           </Button>
         </div>

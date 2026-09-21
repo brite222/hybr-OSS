@@ -33,6 +33,7 @@ export function ActionRow({ action }: { action: ActionItem }) {
         size="sm"
         variant={isOverdue ? "destructive" : "outline"}
         className="shrink-0"
+        nativeButton={false}
         render={<Link href={`/my-work/${action.id}`} />}
       >
         {isOverdue ? "Late" : "Open"}

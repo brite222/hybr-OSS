@@ -21,7 +21,12 @@ export default function PeoplePage() {
           eyebrow="People"
           title="Capacity, capability, engagement, performance and productivity"
         />
-        <Button variant="outline" className="shrink-0" render={<Link href="/people/capacity" />}>
+        <Button
+          variant="outline"
+          className="shrink-0"
+          nativeButton={false}
+          render={<Link href="/people/capacity" />}
+        >
           Capacity view <ArrowRight className="size-4" />
         </Button>
       </div>

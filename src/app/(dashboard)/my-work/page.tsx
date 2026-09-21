@@ -17,7 +17,12 @@ export default function MyWorkPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <SectionHeader eyebrow="My Work" title="The everyday execution screen" />
-        <Button variant="outline" className="shrink-0" render={<Link href="/my-work/weekly" />}>
+        <Button
+          variant="outline"
+          className="shrink-0"
+          nativeButton={false}
+          render={<Link href="/my-work/weekly" />}
+        >
           Weekly priorities <ArrowRight className="size-4" />
         </Button>
       </div>

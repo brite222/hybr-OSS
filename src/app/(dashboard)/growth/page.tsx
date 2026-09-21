@@ -34,6 +34,7 @@ export default function GrowthPage() {
         <Button
           variant="outline"
           className="shrink-0"
+          nativeButton={false}
           render={<Link href="/growth/pipeline" />}
         >
           View pipeline <ArrowRight className="size-4" />
