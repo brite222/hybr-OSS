@@ -242,3 +242,37 @@ export type AuditLogEntry = {
   updated: string;
   reason: string;
 };
+
+export type ExperimentStatus = "Validated" | "Testing" | "Stalled";
+export type ExperimentDecision = "Continue" | "Iterate" | "Stop" | "Scale" | "Pending";
+
+export type Experiment = {
+  id: string;
+  title: string;
+  hypothesis: string;
+  status: ExperimentStatus;
+  decision: ExperimentDecision;
+  evidence: string;
+  successCriteria: string;
+};
+
+export type TeamCapacity = {
+  team: string;
+  capacity: number;
+  execution: number;
+  risk: "Optimal" | "Utilization" | "Healthy" | "Watch";
+  action: string;
+};
+
+export type PersonCapacity = {
+  id: string;
+  name: string;
+  role: string;
+  capacity: number;
+  currentLoad: number;
+  status: "Good" | "Overloaded" | "Available" | "Watch";
+  execution: number;
+  developmentGoals: number;
+  priorities: string[];
+  managerNote: string;
+};

@@ -5,15 +5,18 @@ import type {
   CashWeek,
   ContentItem,
   DepartmentExecution,
+  Experiment,
   IntegrationSource,
   Invoice,
   Kpi,
   KpiDefinition,
   Meeting,
   Opportunity,
+  PersonCapacity,
   Project,
   RoleAccess,
   StrategicPriority,
+  TeamCapacity,
   WeeklyPriority,
 } from "@/lib/types";
 
@@ -791,5 +794,104 @@ export const auditLog: AuditLogEntry[] = [
     original: "Due",
     updated: "Paid",
     reason: "Payment received from Client C",
+  },
+];
+
+// --- Product ---
+
+export const productStats: Kpi[] = [
+  { id: "insights", label: "Validated Insights", value: "18", sublabel: "Documented with evidence", level: "green" },
+  { id: "experiments", label: "Experiments Completed", value: "4", sublabel: "This quarter", level: "info" },
+  { id: "time-to-prototype", label: "Time to Prototype", value: "12d", sublabel: "Idea to testable", level: "green" },
+  { id: "validation-rate", label: "Prototype Validation Rate", value: "50%", sublabel: "Meeting success criteria", level: "amber" },
+  { id: "value-created", label: "Product / AI Value Created", value: "78h", sublabel: "Hours saved / month", level: "green" },
+];
+
+export const experiments: Experiment[] = [
+  {
+    id: "meeting-action-extraction",
+    title: "Meeting Action Extraction",
+    hypothesis: "AI can reduce meeting action capture time by 80% while maintaining accuracy.",
+    status: "Validated",
+    decision: "Scale",
+    evidence: "20 meeting transcripts, manual comparison, user confirmation — 92% action accuracy, 100% visibility within 24h.",
+    successCriteria: "≥ 90% action accuracy, ≤ 24h visibility, high manager trust.",
+  },
+  {
+    id: "indx-opportunity-scoring",
+    title: "INDX Opportunity Scoring",
+    hypothesis: "Diagnostic completion signals predict qualified pipeline better than page views alone.",
+    status: "Testing",
+    decision: "Pending",
+    evidence: "6 weeks of INDX completions cross-referenced against sourced pipeline value.",
+    successCriteria: "Score correlates with meeting conversion at ≥ 30%.",
+  },
+];
+
+// --- People ---
+
+export const peopleStats: Kpi[] = [
+  { id: "revenue-per-fte", label: "Revenue / FTE", value: "$52K", sublabel: "Booked / recognized", level: "green" },
+  { id: "team-execution", label: "Team Execution Score", value: "87%", sublabel: "Actions completed / due", level: "green" },
+  { id: "capacity", label: "Capacity Utilization", value: "86%", sublabel: "Assigned / available", level: "amber" },
+  { id: "engagement", label: "Engagement / Culture Index", value: "4.2 / 5", sublabel: "Survey score", level: "green" },
+  { id: "time-to-productivity", label: "Time to Productivity", value: "21d", sublabel: "Start to threshold", level: "green" },
+];
+
+export const teamCapacity: TeamCapacity[] = [
+  { team: "Growth", capacity: 92, execution: 84, risk: "Optimal", action: "Reallocate" },
+  { team: "Delivery", capacity: 88, execution: 78, risk: "Utilization", action: "Compare" },
+  { team: "Product", capacity: 72, execution: 90, risk: "Healthy", action: "Monitor" },
+  { team: "Finance", capacity: 68, execution: 82, risk: "Healthy", action: "Monitor" },
+];
+
+export const peopleCapacity: PersonCapacity[] = [
+  {
+    id: "sarah",
+    name: "Sarah",
+    role: "Designer",
+    capacity: 100,
+    currentLoad: 78,
+    status: "Good",
+    execution: 88,
+    developmentGoals: 1,
+    priorities: ["HYBR OS design system", "Component library polish"],
+    managerNote: "Healthy load. Good candidate for the next design review.",
+  },
+  {
+    id: "tobi",
+    name: "Tobi A.",
+    role: "AI Engineer",
+    capacity: 100,
+    currentLoad: 108,
+    status: "Overloaded",
+    execution: 90,
+    developmentGoals: 2,
+    priorities: ["Meeting action AI prototype", "KPI explainability demo", "Data quality rules"],
+    managerNote: "High productivity but current workload is above healthy capacity. Reprioritize before adding new tasks.",
+  },
+  {
+    id: "daniel",
+    name: "Daniel",
+    role: "Analyst",
+    capacity: 100,
+    currentLoad: 60,
+    status: "Available",
+    execution: 82,
+    developmentGoals: 1,
+    priorities: ["Cash forecast model", "KPI dictionary QA"],
+    managerNote: "Has room for additional analysis work this sprint.",
+  },
+  {
+    id: "jenna",
+    name: "Jenna",
+    role: "Project Manager",
+    capacity: 100,
+    currentLoad: 92,
+    status: "Watch",
+    execution: 85,
+    developmentGoals: 1,
+    priorities: ["Prototype Sprint recovery plan", "HYBR OS MVP schedule"],
+    managerNote: "Near capacity. Watch for overload if Prototype Sprint risk escalates.",
   },
 ];
