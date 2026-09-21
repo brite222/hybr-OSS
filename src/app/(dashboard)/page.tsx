@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { AiInsightCard } from "@/components/dashboard/ai-insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
@@ -10,6 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { homeStats, myPriorities, aiBrief, myActions } from "@/lib/mock-data";
+
+const urgentActions = myActions.filter((a) => a.status === "Today" || a.status === "Overdue");
 
 export default function HomePage() {
   return (
@@ -51,15 +54,21 @@ export default function HomePage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {myActions.map((a) => (
+              {urgentActions.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell className="max-w-40 truncate text-sm">{a.title}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{a.due}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{a.dueLabel}</TableCell>
                   <TableCell className="text-sm">{a.status}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <Link
+            href="/my-work"
+            className="block border-t bg-secondary/30 px-4 py-2 text-xs font-medium text-brand-blue hover:underline"
+          >
+            View all in My Work →
+          </Link>
         </div>
       </div>
     </div>

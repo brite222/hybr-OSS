@@ -20,13 +20,30 @@ export type AlertItem = {
   action: string;
 };
 
+export const ACTION_STATUSES = ["Today", "This Week", "Overdue", "Upcoming", "Completed"] as const;
+
+export type ActionStatus = (typeof ACTION_STATUSES)[number];
+
 export type ActionItem = {
   id: string;
   title: string;
   owner: string;
-  due: string;
+  dueLabel: string;
   priority: "High" | "Medium" | "Low";
-  status: "Today" | "This Week" | "Overdue" | "Upcoming" | "Completed";
+  status: ActionStatus;
+  source: string;
+  expectedOutcome: string;
+  linkedKpi?: string;
+  blocked?: boolean;
+  blockedReason?: string;
+  completionEvidence?: string;
+};
+
+export type WeeklyPriority = {
+  id: string;
+  title: string;
+  description: string;
+  connectedActions: number;
 };
 
 export const PIPELINE_STAGES = [
